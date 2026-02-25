@@ -1,69 +1,35 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { publicRoutes, protectedRoutes } from "./routes";
-import PublicLayout from "./components/layout/PublicLayout";
-import ProtectedLayout from "./components/layout/ProtectedLayout";
-import { Toaster } from "react-hot-toast";
-import { useUserStore } from "./store/userStore";
-import { useEffect } from "react";
-import WebService from "./utility/WebService";
-import type { User } from "./types/user"; // Adjust the path based on where User type is defined
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
 function App() {
-  // const token = useUserStore((s) => s.token);
-  const { token, setUser, logout } = useUserStore();
-  const isAuthenticated = () => !!token;
-
-  useEffect(() => {
-    if (!token) return;
-
-    WebService.getAPI<{ result: User }>("users/me")
-      .then((res) => {
-        setUser(res.result, token);
-      })
-      .catch(() => logout());
-
-  }, [token, setUser, logout]);
+  const [count, setCount] = useState(0)
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
-
-      <Routes>
-        {/* Public Routes */}
-        {publicRoutes.map(({ path, element: Element }) => (
-          <Route
-            key={path}
-            path={path}
-            element={
-              <PublicLayout>
-                <Element />
-              </PublicLayout>
-            }
-          />
-        ))}
-
-        {/* Protected Routes */}
-        {protectedRoutes.map(({ path, element: Element }) => (
-          <Route
-            key={path}
-            path={path}
-            element={
-              isAuthenticated() ? (
-                <ProtectedLayout>
-                  <Element />
-                </ProtectedLayout>
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-        ))}
-
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
